@@ -1,0 +1,187 @@
+{
+  "drawing_info": {
+    "Model1": {
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "Model2": {
+      "position": {
+        "x": 10,
+        "y": 10
+      }
+    },
+    "Model3": {
+      "position": {
+        "x": -10,
+        "y": 10
+      }
+    },
+    "Model4": {
+      "position": {
+        "x": 20,
+        "y": -6
+      }
+    }
+  },
+  "models": [
+    {
+      "name": "Model1",
+      "signals": [
+        {
+          "label": "CLK",
+          "descriptor": [
+            0,
+            0
+          ],
+          "alias": "CLK"
+        },
+        {
+          "label": "RST",
+          "descriptor": [
+            0,
+            0
+          ],
+          "alias": "RST"
+        },
+        {
+          "label": "D",
+          "descriptor": [
+            0,
+            3
+          ],
+          "alias": "D"
+        },
+        {
+          "label": "Q",
+          "descriptor": [
+            0,
+            3
+          ],
+          "alias": "Q"
+        },
+        {
+          "label": "QN",
+          "descriptor": [
+            0,
+            3
+          ],
+          "alias": "QN"
+        }
+      ]
+    },
+    {
+      "name": "Model3",
+      "signals": [
+        {
+          "label": "CLK",
+          "descriptor": [
+            0,
+            0
+          ],
+          "alias": "CLK"
+        },
+        {
+          "label": "RST",
+          "descriptor": [
+            0,
+            0
+          ],
+          "alias": "RST"
+        },
+        {
+          "label": "D",
+          "descriptor": [
+            0,
+            3
+          ],
+          "alias": "D"
+        },
+        {
+          "label": "Q",
+          "descriptor": [
+            0,
+            3
+          ],
+          "alias": "Q"
+        },
+        {
+          "label": "QN",
+          "descriptor": [
+            0,
+            3
+          ],
+          "alias": "QN"
+        }
+      ]
+    },
+    {
+      "name": "Model2",
+      "signals": [
+        {
+          "label": "CLK",
+          "descriptor": [
+            0,
+            0
+          ],
+          "alias": "CLK"
+        },
+        {
+          "label": "RST",
+          "descriptor": [
+            0,
+            0
+          ],
+          "alias": "RST"
+        },
+        {
+          "label": "QN",
+          "descriptor": [
+            0,
+            3
+          ],
+          "alias": "QN"
+        }
+      ]
+    },
+    {
+      "name": "Model4",
+      "signals": [
+        {
+          "label": "CLK",
+          "descriptor": [
+            0,
+            0
+          ],
+          "alias": "CLK"
+        },
+        {
+          "label": "RST",
+          "descriptor": [
+            0,
+            0
+          ],
+          "alias": "RST"
+        },
+        {
+          "label": "D",
+          "descriptor": [
+            0,
+            3
+          ],
+          "alias": "D"
+        },
+        {
+          "label": "QN",
+          "descriptor": [
+            0,
+            3
+          ],
+          "alias": "QN"
+        }
+      ]
+    }
+  ]
+}
+
