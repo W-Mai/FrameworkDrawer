@@ -6,6 +6,7 @@ from schemdraw import Segment, SegmentCircle, SegmentText
 from schemdraw.elements import Wire
 from schemdraw.util import Point
 from itertools import combinations
+from UnionFind import UnionFind
 
 
 class FluxCapacitor(elm.Element):
@@ -72,87 +73,6 @@ class ModelBox(elm.Element):
         self.segments.append(Segment([(-padding_width, delta_y), (padding_width, delta_y)]))
 
 
-# with schemdraw.Drawing(show=False) as d:
-#     model = d.add(ModelBox(name="ModelTest11111", signals=[
-#         {
-#             "label": "CLK",
-#             "direction": "input",
-#             "type": "wire",
-#             "descriptor": [0, 0],
-#             "alias": "CLK"
-#         },
-#         {
-#             "label": "RST",
-#             "descriptor": [0, 0],
-#             "alias": "RST"
-#         },
-#         {
-#             "label": "D",
-#             "descriptor": [0, 3],
-#             "alias": "D"
-#         },
-#         {
-#             "label": "E",
-#             "descriptor": [0, 3],
-#             "alias": "D"
-#         }
-#     ]))
-#     model2 = d.add(ModelBox(name="Model6", signals=[
-#         {
-#             "label": "CLK",
-#             "descriptor": [0, 0],
-#             "alias": "CLK"
-#         },
-#         {
-#             "label": "RST",
-#             "descriptor": [0, 0],
-#             "alias": "RST"
-#         },
-#         {
-#             "label": "D",
-#             "descriptor": [0, 3],
-#             "alias": "D"
-#         },
-#         {
-#             "label": "E",
-#             "descriptor": [0, 3],
-#             "alias": "D"
-#         }
-#     ]).at([10, -5]))
-#     # d.add(elm.Wire().at(res.start).to(getattr(model, 'p3')))
-#     d.add(elm.Wire('z').at(getattr(model, "CLK.right")).to(getattr(model2, "CLK.left")))
-#     d.add(elm.Wire('z').at(getattr(model, "RST.right")).to(getattr(model2, "RST.left")))
-#     d.add(elm.Wire('z').at(getattr(model, "D.right")).to(getattr(model2, "D.left")))
-#     d.add(elm.Wire('z').at(getattr(model, "E.right")).to(getattr(model2, "E.left")))
-#
-#     model3 = d.add(ModelBox(name="Model77", signals=[
-#         {
-#             "label": "CLK",
-#             "descriptor": [0, 0],
-#             "alias": "CLK"
-#         },
-#         {
-#             "label": "RST",
-#             "descriptor": [0, 0],
-#             "alias": "RST"
-#         },
-#         {
-#             "label": "D",
-#             "descriptor": [0, 3],
-#             "alias": "D"
-#         },
-#         {
-#             "label": "E",
-#             "descriptor": [0, 3],
-#             "alias": "D"
-#         }
-#     ]).at([10, 5]))
-#     d.add(elm.Arc3().at(getattr(model, "CLK.right")).to(getattr(model3, "CLK.left")))
-#     d.add(elm.Arc3(1, -30, 30).at(getattr(model2, "CLK.right")).to(getattr(model3, "CLK.right")))
-#     d.add(elm.Arc3().at(getattr(model, "RST.right")).to(getattr(model3, "RST.left")))
-#     d.add(elm.Arc3().at(getattr(model, "D.right")).to(getattr(model3, "D.left")))
-#     d.add(elm.Arc3().at(getattr(model, "E.right")).to(getattr(model3, "E.left")))
-
 with schemdraw.Drawing(show=False) as d:
     doc = open("model.json", "r")
     model_json = json.load(doc)
@@ -167,10 +87,12 @@ with schemdraw.Drawing(show=False) as d:
         model_info.append({
             'name': model['name'],
             'pos': pos,
-            'signals': [s['label'] for s in model['signals']]
+            'signals': [s['label'] for s in model['signals']],
         })
 
     model_combination = combinations(model_info, 2)
+
+    model_wire_signal_model_set = dict()
     for model_pair in model_combination:
         model_pair = list(model_pair)
         model_pair.sort(key=lambda x: x['pos'].x)
@@ -179,34 +101,16 @@ with schemdraw.Drawing(show=False) as d:
         right_model = model_pair[1]
 
         for signal in set(left_model['signals']).intersection(right_model['signals']):
+            if signal not in model_wire_signal_model_set:
+                model_wire_signal_model_set[signal] = UnionFind()
+            if model_wire_signal_model_set[signal].connected(left_model['name'], right_model['name']):
+                continue
+
+            model_wire_signal_model_set[signal].union(left_model['name'], right_model['name'])
             left_signal = getattr(model_instances[left_model['name']], f"{signal}.right", signal)
             right_signal = getattr(model_instances[right_model['name']], f"{signal}.left", signal)
             d.add(elm.Wire('z').at(left_signal).to(right_signal))
 
-        # model_info[model['name']]['signals'] = model['signals']
-
-    print(model_info)
-
-    # d.add(elm.Wire('z').at(getattr(model, "CLK.right")).to(getattr(model2, "CLK.left")))
-    # d.add(elm.Wire('z').at(getattr(model, "RST.right")).to(getattr(model2, "RST.left")))
-    # d.add(elm.Wire('z').at(getattr(model, "D.right")).to(getattr(model2, "D.left")))
-    # d.add(elm.Wire('z').at(getattr(model, "E.right")).to(getattr(model2, "E.left")))
-    #
-    # d.add(elm.Arc3().at(getattr(model, "CLK.right")).to(getattr(model3, "CLK.left")))
-    # d.add(elm.Arc3(1, -30, 30).at(getattr(model2, "CLK.right")).to(getattr(model3, "CLK.right")))
-    # d.add(elm.Arc3().at(getattr(model, "RST.right")).to(getattr(model3, "RST.left")))
-    # d.add(elm.Arc3().at(getattr(model, "D.right")).to(getattr(model3, "D.left")))
-    # d.add(elm.Arc3().at(getattr(model, "E.right")).to(getattr(model3, "E.left")))
+    print({u[0]: u[1].father for u in model_wire_signal_model_set.items()})
 
 d.save("./imgs/schema.svg")
-
-exit(0)
-
-with schemdraw.Drawing() as d:
-    d += elm.Resistor().right().label('1Ω')
-
-with schemdraw.Drawing() as d:
-    d += elm.Resistor().right().label('1Ω')
-    d += elm.Capacitor().down().label('10μF')
-    d += elm.Line().left()
-    d += elm.SourceSin().up().label('10V')
