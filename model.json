@@ -2,8 +2,8 @@
   "drawing_info": {
     "Model1": {
       "position": {
-        "x": 0,
-        "y": 0
+        "x": -3,
+        "y":5
       }
     },
     "Model2": {
@@ -20,7 +20,13 @@
     },
     "Model4": {
       "position": {
-        "x": 20,
+        "x": 6,
+        "y": -6
+      }
+    },
+    "Model5": {
+      "position": {
+        "x": -16,
         "y": -6
       }
     }
@@ -147,6 +153,43 @@
     },
     {
       "name": "Model4",
+      "signals": [
+        {
+          "label": "CLK",
+          "descriptor": [
+            0,
+            0
+          ],
+          "alias": "CLK"
+        },
+        {
+          "label": "RST",
+          "descriptor": [
+            0,
+            0
+          ],
+          "alias": "RST"
+        },
+        {
+          "label": "D",
+          "descriptor": [
+            0,
+            3
+          ],
+          "alias": "D"
+        },
+        {
+          "label": "QN",
+          "descriptor": [
+            0,
+            3
+          ],
+          "alias": "QN"
+        }
+      ]
+    },
+    {
+      "name": "Model5",
       "signals": [
         {
           "label": "CLK",

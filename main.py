@@ -9,23 +9,6 @@ from itertools import combinations
 from UnionFind import UnionFind
 
 
-class FluxCapacitor(elm.Element):
-    def __init__(self, *d, **kwargs):
-        super().__init__(*d, **kwargs)
-        radius = 0.075
-        fclen = 0.5
-        self.segments.append(SegmentCircle((0, 0), radius))
-        self.segments.append(Segment([(0, 0), (0, -fclen * 1.41)]))
-        self.segments.append(Segment([(0, 0), (fclen, fclen)]))
-        self.segments.append(Segment([(0, 0), (-fclen, fclen)]))
-        self.segments.append(SegmentCircle((0, -fclen * 1.41), 0.2, fill=None))
-        self.segments.append(SegmentCircle((fclen, fclen), 0.2, fill=None))
-        self.segments.append(SegmentCircle((-fclen, fclen), 0.2, fill=None))
-        self.anchors['p1'] = (-fclen, fclen)
-        self.anchors['p2'] = (fclen, fclen)
-        self.anchors['p3'] = (0, -fclen * 1.41)
-
-
 class ModelBox(elm.Element):
     def __init__(self, name, signals=None, *d, **kwargs):
         super().__init__(*d, **kwargs)
@@ -90,7 +73,16 @@ with schemdraw.Drawing(show=False) as d:
             'signals': [s['label'] for s in model['signals']],
         })
 
+    # 1,2,3,4 combinations is
+    # [1, 2] [1, 3] [1, 4] [2, 3] [2, 4] [3, 4]
+    # [1, 2] [2, 3] [3, 4] [1, 3] [2, 4] [1, 4]
+    # model_info.sort(key=lambda x: x['pos'].x)
+    print([x['pos'] for x in model_info])
     model_combination = combinations(model_info, 2)
+    model_combination = list(model_combination)
+    print([(x[0]['name'], x[1]['name']) for x in model_combination])
+    # model_combination.sort(key=lambda x: x[1]['name'])
+    print([(x[0]['name'], x[1]['name']) for x in model_combination])
 
     model_wire_signal_model_set = dict()
     for model_pair in model_combination:
@@ -109,7 +101,7 @@ with schemdraw.Drawing(show=False) as d:
             model_wire_signal_model_set[signal].union(left_model['name'], right_model['name'])
             left_signal = getattr(model_instances[left_model['name']], f"{signal}.right", signal)
             right_signal = getattr(model_instances[right_model['name']], f"{signal}.left", signal)
-            d.add(elm.Wire('z').at(left_signal).to(right_signal))
+            d.add(elm.Wire("z").at(left_signal).to(right_signal))
 
     print({u[0]: u[1].father for u in model_wire_signal_model_set.items()})
 
