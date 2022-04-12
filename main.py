@@ -76,16 +76,21 @@ with schemdraw.Drawing(show=False) as d:
     # 1,2,3,4 combinations is
     # [1, 2] [1, 3] [1, 4] [2, 3] [2, 4] [3, 4]
     # [1, 2] [2, 3] [3, 4] [1, 3] [2, 4] [1, 4]
-    # model_info.sort(key=lambda x: x['pos'].x)
-    print([x['pos'] for x in model_info])
+    model_info.sort(key=lambda x: x['pos'].x)
     model_combination = combinations(model_info, 2)
     model_combination = list(model_combination)
-    print([(x[0]['name'], x[1]['name']) for x in model_combination])
-    # model_combination.sort(key=lambda x: x[1]['name'])
-    print([(x[0]['name'], x[1]['name']) for x in model_combination])
 
     model_wire_signal_model_set = dict()
-    for model_pair in model_combination:
+    next_model_name = model_info[0]['name']
+    while len(model_combination) > 0:
+        try:
+            model_pair = next(filter(lambda m: m[0]['name'] == next_model_name, model_combination))
+        except StopIteration:
+            model_pair = model_combination[0]
+        next_model_name = model_pair[1]['name']
+        model_combination.remove(model_pair)
+        print(next_model_name)
+
         model_pair = list(model_pair)
         model_pair.sort(key=lambda x: x['pos'].x)
 
