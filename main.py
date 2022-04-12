@@ -1,9 +1,13 @@
+# Author: W-Mai
+# Date: 2022-04-11
+# Project: FrameworkGraph
+
+
 import json
 
 import schemdraw
 import schemdraw.elements as elm
 from schemdraw import Segment, SegmentCircle, SegmentText
-from schemdraw.elements import Wire
 from schemdraw.util import Point
 from itertools import combinations
 from UnionFind import UnionFind
@@ -12,8 +16,8 @@ COLORS = ["#ffa502", "#ff6348", "#ff4757", "#747d8c", "#2f3542", "#2ed573", "#1e
 
 
 class ModelBox(elm.Element):
-    def __init__(self, name, signals=None, *d, **kwargs):
-        super().__init__(*d, **kwargs)
+    def __init__(self, name, signals=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         if signals is None:
             signals = []
 
