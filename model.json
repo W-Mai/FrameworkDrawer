@@ -1,39 +1,41 @@
 {
   "drawing_info": {
-    "Model1": {
+    "ALU": {
       "position": {
-        "x": -3,
-        "y":5
-      }
+        "x": -1,
+        "y":15
+      },
+      "flag": true
     },
     "Model2": {
       "position": {
-        "x": 15,
-        "y": 10
+        "x": -3,
+        "y": -3
       }
     },
     "Model3": {
       "position": {
-        "x": -7,
+        "x": -6.5,
         "y": 5
       }
     },
     "Model4": {
       "position": {
-        "x": 6,
-        "y": -6
-      }
+        "x": 10,
+        "y": 15
+      },
+      "flag": true
     },
     "Model5": {
       "position": {
-        "x": -16,
+        "x": -14,
         "y": -6
       }
     }
   },
   "models": [
     {
-      "name": "Model1",
+      "name": "ALU",
       "signals": [
         {
           "label": "CLK",
@@ -148,6 +150,14 @@
             3
           ],
           "alias": "QN"
+        },
+        {
+          "label": "Test",
+          "descriptor": [
+            0,
+            3
+          ],
+          "alias": "Test"
         }
       ]
     },
@@ -222,6 +232,14 @@
             3
           ],
           "alias": "QN"
+        },
+        {
+          "label": "Test",
+          "descriptor": [
+            0,
+            3
+          ],
+          "alias": "Test"
         }
       ]
     }

@@ -65,11 +65,13 @@ with schemdraw.Drawing(show=False) as d:
     model_instances = dict()
     for model in model_json['models']:
         pos = Point(model_json['drawing_info'][model['name']]['position'].values())
+        flag = model_json['drawing_info'][model['name']].get('flag', False)
         model_instances[model['name']] = d.add(ModelBox(model['name'], model['signals']).at(pos))
 
         model_info.append({
             'name': model['name'],
             'pos': pos,
+            'flag': flag,
             'signals': [s['label'] for s in model['signals']],
         })
 
@@ -89,7 +91,6 @@ with schemdraw.Drawing(show=False) as d:
             model_pair = model_combination[0]
         next_model_name = model_pair[1]['name']
         model_combination.remove(model_pair)
-        print(next_model_name)
 
         model_pair = list(model_pair)
         model_pair.sort(key=lambda x: x['pos'].x)
@@ -97,16 +98,38 @@ with schemdraw.Drawing(show=False) as d:
         left_model = model_pair[0]
         right_model = model_pair[1]
 
+
+        def get_signal(model_name, signal_name, direction):
+            if direction == "left":
+                return getattr(model_instances[model_name], f"{signal_name}.left")
+            else:
+                return getattr(model_instances[model_name], f"{signal_name}.right")
+
         for signal in set(left_model['signals']).intersection(right_model['signals']):
             if signal not in model_wire_signal_model_set:
                 model_wire_signal_model_set[signal] = UnionFind()
             if model_wire_signal_model_set[signal].connected(left_model['name'], right_model['name']):
                 continue
 
+            signal_index = left_model['signals'].index(signal)
+
             model_wire_signal_model_set[signal].union(left_model['name'], right_model['name'])
-            left_signal = getattr(model_instances[left_model['name']], f"{signal}.right", signal)
-            right_signal = getattr(model_instances[right_model['name']], f"{signal}.left", signal)
-            d.add(elm.Wire("z").at(left_signal).to(right_signal))
+            left_model_left_signal = get_signal(left_model['name'], signal, 'left')
+            left_model_right_signal = get_signal(left_model['name'], signal, 'right')
+            right_model_left_signal = get_signal(right_model['name'], signal, 'left')
+            right_model_right_signal = get_signal(right_model['name'], signal, 'right')
+
+            if left_model_right_signal.x + 0.5 > right_model_left_signal.x:
+                if right_model['flag']:
+                    d.add(elm.Wire("c", k=right_model_right_signal.x - left_model_right_signal.x + 0.5 + signal_index / 3)
+                          .at(left_model_right_signal)
+                          .to(right_model_right_signal))
+                else:
+                    d.add(elm.Wire("c", k=-(0.5 + signal_index / 3))
+                          .at(left_model_left_signal)
+                          .to(right_model_left_signal))
+            else:
+                d.add(elm.Wire("c", k=0.5 + signal_index / 3).at(left_model_right_signal).to(right_model_left_signal))
 
     print({u[0]: u[1].father for u in model_wire_signal_model_set.items()})
 
