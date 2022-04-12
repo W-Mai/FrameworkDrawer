@@ -8,6 +8,8 @@ from schemdraw.util import Point
 from itertools import combinations
 from UnionFind import UnionFind
 
+COLORS = ["#ffa502", "#ff6348", "#ff4757", "#747d8c", "#2f3542", "#2ed573", "#1e90ff", "#3742fa", "#f1f2f6", "#f1f2f6"]
+
 
 class ModelBox(elm.Element):
     def __init__(self, name, signals=None, *d, **kwargs):
@@ -75,6 +77,8 @@ with schemdraw.Drawing(show=False) as d:
             'signals': [s['label'] for s in model['signals']],
         })
 
+    all_signals = {s for info in model_info for s in info['signals']}
+    signal_color_map = {s: COLORS[i % len(COLORS)] for i, s in enumerate(sorted(all_signals))}
     # 1,2,3,4 combinations is
     # [1, 2] [1, 3] [1, 4] [2, 3] [2, 4] [3, 4]
     # [1, 2] [2, 3] [3, 4] [1, 3] [2, 4] [1, 4]
@@ -105,6 +109,7 @@ with schemdraw.Drawing(show=False) as d:
             else:
                 return getattr(model_instances[model_name], f"{signal_name}.right")
 
+
         for signal in set(left_model['signals']).intersection(right_model['signals']):
             if signal not in model_wire_signal_model_set:
                 model_wire_signal_model_set[signal] = UnionFind()
@@ -121,15 +126,22 @@ with schemdraw.Drawing(show=False) as d:
 
             if left_model_right_signal.x + 0.5 > right_model_left_signal.x:
                 if right_model['flag']:
-                    d.add(elm.Wire("c", k=right_model_right_signal.x - left_model_right_signal.x + 0.5 + signal_index / 3)
+                    wire = elm.Wire(shape="c",
+                                    k=right_model_right_signal.x - left_model_right_signal.x + 0.5 + signal_index / 3)
+                    d.add(wire
                           .at(left_model_right_signal)
-                          .to(right_model_right_signal))
+                          .to(right_model_right_signal)
+                          .color(signal_color_map[signal]))
                 else:
-                    d.add(elm.Wire("c", k=-(0.5 + signal_index / 3))
+                    wire = elm.Wire(shape="c",
+                                    k=-(0.5 + signal_index / 3))
+                    d.add(wire
                           .at(left_model_left_signal)
-                          .to(right_model_left_signal))
+                          .to(right_model_left_signal)
+                          .color(signal_color_map[signal]))
             else:
-                d.add(elm.Wire("c", k=0.5 + signal_index / 3).at(left_model_right_signal).to(right_model_left_signal))
+                d.add(elm.Wire("c", k=0.5 + signal_index / 3).at(left_model_right_signal).to(
+                    right_model_left_signal)).color(signal_color_map[signal])
 
     print({u[0]: u[1].father for u in model_wire_signal_model_set.items()})
 
