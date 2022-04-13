@@ -21,15 +21,15 @@
     },
     "Model4": {
       "position": {
-        "x": 10,
-        "y": 15
+        "x": 6,
+        "y": 18
       },
       "flag": true
     },
     "Model5": {
       "position": {
         "x": -14,
-        "y": -6
+        "y": 5
       }
     }
   },
