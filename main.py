@@ -12,8 +12,6 @@ from schemdraw.util import Point
 from itertools import combinations
 from UnionFind import UnionFind
 
-COLORS = ["#ffa502", "#ff6348", "#ff4757", "#747d8c", "#2f3542", "#2ed573", "#1e90ff", "#3742fa", "#f1f2f6", "#f1f2f6"]
-
 
 class ModelBox(elm.Element):
     def __init__(self, name, signals=None, *args, **kwargs):
@@ -62,11 +60,15 @@ class ModelBox(elm.Element):
         self.segments.append(Segment([(-padding_width, delta_y), (padding_width, delta_y)]))
 
 
+# class FrameworkDrawer(object):
+#     def __init__(self, json_file):
+
 with schemdraw.Drawing(show=False) as d:
     doc = open("model.json", "r")
     model_json = json.load(doc)
     doc.close()
 
+    COLORS = model_json['Colors']
     model_info = []
     model_instances = dict()
     for model in model_json['models']:
