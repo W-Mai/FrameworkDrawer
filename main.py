@@ -11,7 +11,7 @@ import schemdraw.elements as elm
 from schemdraw import Segment, SegmentCircle, SegmentText, ImageFormat
 from schemdraw.util import Point
 from itertools import combinations
-from UnionFind import UnionFind
+from xunionfind.UnionFind import UnionFind
 
 
 class ModelBox(elm.Element):
