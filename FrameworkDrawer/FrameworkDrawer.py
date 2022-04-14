@@ -25,7 +25,7 @@ class ModelBox(elm.Element):
             descriptor = "" if tmp_descriptor[0] == 0 and tmp_descriptor[
                 1] == 0 else f" [{tmp_descriptor[1]}, {tmp_descriptor[0]}]"
 
-            sig_text = SegmentText((0, -0.6 * (signals.index(signal)) - 0.3), f"{signal['label']}{descriptor}",
+            sig_text = SegmentText((0, -0.6 * (signals.index(signal)) - 0.3), f"{signal['alias']}{descriptor}",
                                    fontsize=12)
             self.segments.append(sig_text)
 
