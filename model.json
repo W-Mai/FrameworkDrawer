@@ -2,13 +2,13 @@
   "drawing_info": {
     "ALU":          {"position": {"x": -1, "y": 15}, "flag": true},
     "Model2":       {"position": {"x": -3, "y": -3}},
-    "Model3":       {"position": {"x": -6.5, "y": 5}},
+    "Core/Ctrl":    {"position": {"x": -6.5, "y": 5}},
     "Model4":       {"position": {"x": 6, "y": 18}, "flag": true},
     "Core/PC_REG":  {"position": {"x": -35, "y": 0}},
-    "Core/REGS":    {"position": {"x": -28, "y": 15}},
-    "Core/CSR_REG": {"position": {"x": -45, "y": 15}},
-    "Core/IF_ID": {"position": {"x": -26, "y": 5}, "flag": true},
-    "Core/ID": {"position": {"x": -15, "y": 3}}
+    "Core/REGS":    {"position": {"x": -45, "y": 15}},
+    "Core/CSR_REG": {"position": {"x": -55, "y": 15}},
+    "Core/IF_ID":   {"position": {"x": -26, "y": 5}, "flag": true},
+    "Core/ID":      {"position": {"x": -15, "y": 2}}
   },
   "models":       [
     {
@@ -42,32 +42,48 @@
       ]
     },
     {
-      "name":    "Model3",
+      "name":    "Core/Ctrl",
       "signals": [
         {
           "label":      "CLK",
           "descriptor": [0, 0],
           "alias":      "CLK"
-        },
-        {
-          "label":      "RST",
+        }, {
+          "label":      "Jump_Flag_In",
           "descriptor": [0, 0],
-          "alias":      "RST"
-        },
-        {
-          "label":      "D",
-          "descriptor": [0, 3],
-          "alias":      "D"
-        },
-        {
-          "label":      "Q",
-          "descriptor": [0, 3],
-          "alias":      "Q"
-        },
-        {
-          "label":      "QN",
-          "descriptor": [0, 3],
-          "alias":      "QN"
+          "alias":      "Jump_Flag_In"
+        }, {
+          "label":      "Jump_Addr_In",
+          "descriptor": [0, 31],
+          "alias":      "Jump_Addr_In"
+        }, {
+          "label":      "Hold_Flag_EX_In",
+          "descriptor": [0, 0],
+          "alias":      "Hold_Flag_EX_In"
+        }, {
+          "label":      "Hold_Flag_RIB_In",
+          "descriptor": [0, 0],
+          "alias":      "Hold_Flag_RIB_In"
+        }, {
+          "label":      "Jtag_Halt_Flag_In",
+          "descriptor": [0, 0],
+          "alias":      "Jtag_Halt_Flag_In"
+        }, {
+          "label":      "Hold_Flag_CLINT_In",
+          "descriptor": [0, 0],
+          "alias":      "Hold_Flag_CLINT_In"
+        }, {
+          "label":      "Hold_Flag_Out",
+          "descriptor": [0, 2],
+          "alias":      "Hold_Flag_Out"
+        }, {
+          "label":      "Jump_Flag_Out",
+          "descriptor": [0, 0],
+          "alias":      "Jump_Flag_Out"
+        }, {
+          "label":      "Jump_Addr_Out",
+          "descriptor": [0, 31],
+          "alias":      "Jump_Addr_Out"
         }
       ]
     },
@@ -181,7 +197,7 @@
         },
         {
           "label":      "Write_Addr_In",
-          "descriptor": [0, 5],
+          "descriptor": [0, 4],
           "alias":      "Write_Addr_In"
         },
         {
@@ -196,7 +212,7 @@
         },
         {
           "label":      "Jtag_Write_Addr_In",
-          "descriptor": [0, 5],
+          "descriptor": [0, 4],
           "alias":      "Jtag_Write_Addr_In"
         },
         {
@@ -206,12 +222,12 @@
         },
         {
           "label":      "Read_Addr1_In",
-          "descriptor": [0, 5],
+          "descriptor": [0, 4],
           "alias":      "Read_Addr1_In"
         },
         {
           "label":      "Read_Addr2_In",
-          "descriptor": [0, 5],
+          "descriptor": [0, 4],
           "alias":      "Read_Addr2_In"
         },
         {
@@ -365,18 +381,112 @@
       "name":    "Core/ID",
       "signals": [
         {
-          "label": "RST",
+          "label":      "RST",
           "descriptor": [0, 0],
-          "alias": "RST"
+          "alias":      "RST"
         },
         {
-          "label": "Instruction_Out",
+          "label":      "Instruction_Out",
           "descriptor": [0, 31],
-          "alias": "Instruction_In"
+          "alias":      "Instruction_In"
+        },
+        {
+          "label":      "Instruction_Addr_Out",
+          "descriptor": [0, 31],
+          "alias":      "Instruction_Addr_In"
+        },
+        {
+          "label":      "Reg1_Read_Data_In",
+          "descriptor": [0, 31],
+          "alias":      "Reg1_Read_Data_In"
+        },
+        {
+          "label":      "Reg2_Read_Data_In",
+          "descriptor": [0, 31],
+          "alias":      "Reg2_Read_Data_In"
+        },
+        {
+          "label":      "CSR_Read_Data_In",
+          "descriptor": [0, 31],
+          "alias":      "CSR_Read_Data_In"
+        },
+        {
+          "label":      "EX_Jump_Flag_In",
+          "descriptor": [0, 0],
+          "alias":      "EX_Jump_Flag_In"
+        },
+        {
+          "label":      "Reg1_Read_Addr_Out",
+          "descriptor": [0, 4],
+          "alias":      "Reg1_Read_Addr_Out"
+        },
+        {
+          "label":      "Reg2_Read_Addr_Out",
+          "descriptor": [0, 4],
+          "alias":      "Reg2_Read_Addr_Out"
+        },
+        {
+          "label":      "CSR_Read_Addr_Out",
+          "descriptor": [0, 31],
+          "alias":      "CSR_Read_Addr_Out"
+        },
+        {
+          "label":      "MEM_Req_Out",
+          "descriptor": [0, 0],
+          "alias":      "MEM_Req_Out"
+        },
+        {
+          "label":      "Instruction_In66",
+          "descriptor": [0, 31],
+          "alias":      "Instruction_Out"
+        },
+        {
+          "label":      "Instruction_Addr_In66",
+          "descriptor": [0, 31],
+          "alias":      "Instruction_Addr_Out"
+        },
+        {
+          "label":      "Reg1_Read_Data_In66",
+          "descriptor": [0, 31],
+          "alias":      "Reg1_Read_Data_Out"
+        },
+        {
+          "label":      "Reg2_Read_Data_In66",
+          "descriptor": [0, 31],
+          "alias":      "Reg2_Read_Data_Out"
+        },
+        {
+          "label":      "Reg_Write_En_Out",
+          "descriptor": [0, 0],
+          "alias":      "Reg_Write_En_Out"
+        },
+        {
+          "label":      "Reg_Write_Addr_Out",
+          "descriptor": [0, 4],
+          "alias":      "Reg_Write_Addr_Out"
+        },
+        {
+          "label":      "CSR_Write_En_Out",
+          "descriptor": [0, 0],
+          "alias":      "CSR_Write_En_Out"
+        },
+        {
+          "label":      "CSR_Read_Data_In66",
+          "descriptor": [0, 31],
+          "alias":      "CSR_Read_Data_Out"
+        },
+        {
+          "label":      "CSR_Write_Addr_Out66",
+          "descriptor": [0, 31],
+          "alias":      "CSR_Write_Addr_Out"
         }
       ]
     }
   ],
-  "Colors":       ["#ffa502", "#ff6348", "#ff4757", "#747d8c", "#2f3542", "#2ed573", "#1e90ff", "#3742fa", "#e84393", "#05c46b"]
+  "Colors":       [
+    "#ffa502", "#ff6348", "#ff4757", "#747d8c",
+    "#2f3542", "#2ed573", "#1e90ff", "#3742fa",
+    "#e84393", "#05c46b", "#ffd43b", "#ffa000"
+  ]
 }
 
