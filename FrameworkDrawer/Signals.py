@@ -18,6 +18,9 @@ class Descriptor(object):
         self.start = start
         self.end = end
 
+    def __str__(self):
+        return f"[{self.start}, {self.end}]"
+
 
 class SignalBase(object):
     TYPE = None
@@ -26,6 +29,13 @@ class SignalBase(object):
         self.label = label
         self.descriptor = Descriptor(*descriptor) if not isinstance(descriptor, Descriptor) else descriptor
         self.alias = alias
+
+    def to_dict(self):
+        return {
+            "label": self.label,
+            "descriptor": str(self.descriptor),
+            "alias": self.alias
+        }
 
 
 class Wire(SignalBase):
