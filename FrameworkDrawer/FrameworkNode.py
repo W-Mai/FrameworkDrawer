@@ -18,29 +18,30 @@ from .Signals import *
 
 class ModelBoxBaseModelMetaclass(type):
     def __new__(mcs, name, bases, attrs):
-        mcs._attrs = attrs.copy()
+        mcs._attrs = None
+        mcs._signals = None
+
         attrs["_attrs"] = attrs
-        return super().__new__(mcs, name, bases, attrs)
 
-    @property
-    def attrs(self):
-        return self._attrs
-
-
-class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
-    Meta = None
-
-    def __init__(self):
-        self._signals = []
-
-        for attr in type(self).attrs.items():
+        signals = []
+        for attr in attrs.items():
             sig_name: str = attr[0]
             sig_obj = attr[1]
             if isinstance(sig_obj, SignalBase):
                 # sig_obj: SignalBase
                 if sig_obj.alias is None:
                     setattr(sig_obj, 'alias', sig_name)
-                self._signals.append(sig_obj)
+                signals.append(sig_obj)
+        attrs['_signals'] = signals
+
+        return super().__new__(mcs, name, bases, attrs)
+
+
+class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
+    Meta = None
+
+    def __init__(self):
+        pass
 
     def to_dict(self):
         meta_dict = self.meta_dict
@@ -50,7 +51,7 @@ class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
                 meta_dict.get(conf_name, None)
             for conf_name in self.readable_conf() if meta_dict.get(conf_name, None) is not None
         }
-        res_dict['signals'] = [sig.to_dict() for sig in self._signals]
+        res_dict['signals'] = [sig.to_dict() for sig in self.signals]
 
         # 如果name为空，则使用类名
         if meta_dict.get('name', None) is not None:
@@ -71,6 +72,14 @@ class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
                 conf_name: getattr(meta_class, conf_name, None)
                 for conf_name in self.readable_conf()
             }
+
+    @property
+    def attrs(self):
+        return self._attrs
+
+    @property
+    def signals(self):
+        return self._signals
 
 
 class CONFIGURE(object):
