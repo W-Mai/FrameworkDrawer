@@ -6,7 +6,6 @@
 #############################################
 from optparse import Option
 from typing import Dict, Type, Optional, List, Tuple
-
 from .Signals import *
 
 
@@ -15,6 +14,22 @@ from .Signals import *
 #       "signals": [],
 # }
 #
+
+class Point(object):
+    def __init__(self, x: float, y: float):
+        self.x = x
+        self.y = y
+
+    def __str__(self):
+        return "Point(x={}, y={})".format(self.x, self.y)
+
+    @property
+    def export(self):
+        return {
+            "x": self.x,
+            "y": self.y
+        }
+
 
 class ModelBoxBaseModelMetaclass(type):
     def __new__(mcs, name, bases, attrs):
@@ -45,24 +60,28 @@ class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
 
     def to_dict(self):
         meta_dict = self.meta_dict
+        res_dict = {
+            # 如果name为空，则使用类名
+            'name': meta_dict.get('name', type(self).__name__),
+            'signals': [sig.to_dict() for sig in self.signals]
+        }
 
+        return res_dict
+
+    @property
+    def other_conf(self):
+        meta_dict = self.meta_dict
         res_dict = {
             conf_name:
                 meta_dict.get(conf_name, None)
             for conf_name in self.readable_conf() if meta_dict.get(conf_name, None) is not None
         }
-        res_dict['signals'] = [sig.to_dict() for sig in self.signals]
-
-        # 如果name为空，则使用类名
-        if meta_dict.get('name', None) is not None:
-            res_dict['name'] = type(self).__name__
-
         return res_dict
 
     # 哪些配置项可以读取
     @staticmethod
     def readable_conf():
-        return ["name", "position", "flag"]
+        return ["position", "flag"]
 
     @property
     def meta_dict(self):
@@ -101,7 +120,7 @@ class CONFIGURE(object):
         self.OTHER_CONF = other_conf
 
         for node, pos in node_pos_pair.items():
-            node.Meta.position = pos
+            node.Meta.position = Point(*pos)
 
         for node, conf in other_conf.items():
             for attr in conf.items():
