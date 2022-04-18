@@ -19,7 +19,11 @@ class Descriptor(object):
         self.end = end
 
     def __str__(self):
-        return f"[{self.start}, {self.end}]"
+        return f"{self.start}, {self.end}]"
+
+    @property
+    def export(self):
+        return [self.start, self.end]
 
 
 class SignalBase(object):
@@ -33,7 +37,7 @@ class SignalBase(object):
     def to_dict(self):
         return {
             "label": self.label,
-            "descriptor": str(self.descriptor),
+            "descriptor": self.descriptor.export,
             "alias": self.alias
         }
 

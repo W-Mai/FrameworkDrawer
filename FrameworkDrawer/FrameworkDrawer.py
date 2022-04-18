@@ -81,7 +81,7 @@ class FrameworkDrawer(object):
         with schemdraw.Drawing(show=False) as d:
             model_json = self.json_data
 
-            COLORS = model_json['Colors']
+            COLORS = model_json['colors']
             model_info = []
             model_instances = dict()
             for model in model_json['models']:
