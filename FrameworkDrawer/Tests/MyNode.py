@@ -21,11 +21,17 @@ class TestModel2(ModelBoxBaseModel):
         name = "TestMode2"
 
 
-CONFIG = CONFIGURE(node_pos_pair={
-    TestModel: (0, 10),
-    TestModel2: (0, 20),
-}, other_conf={
-    TestModel: {
-        "flag": True,
-    }
-})
+CONFIG = CONFIGURE(
+    node_pos_pair={
+        TestModel: (0, 10),
+        TestModel2: (0, 20),
+    }, other_conf={
+        TestModel: {
+            "flag": True,
+        }
+    }, colors=[
+        "#ffa502", "#ff6348", "#ff4757", "#747d8c",
+        "#2f3542", "#2ed573", "#1e90ff", "#3742fa",
+        "#e84393", "#05c46b", "#ffd43b", "#ffa000"
+    ]
+)

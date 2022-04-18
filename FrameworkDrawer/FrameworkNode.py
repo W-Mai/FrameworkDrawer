@@ -5,7 +5,7 @@
 # Created Time:  2022-04-16
 #############################################
 from optparse import Option
-from typing import Dict, Type, Optional
+from typing import Dict, Type, Optional, List, Tuple
 
 from .Signals import *
 
@@ -78,11 +78,13 @@ class CONFIGURE(object):
     def __init__(self,
                  node_pos_pair: Dict[Type[ModelBoxBaseModel], Tuple[int, int]],
                  other_conf=None,
-                 colors: Tuple[str] = (
-                         "#ffa502", "#ff6348", "#ff4757", "#747d8c",
-                         "#2f3542", "#2ed573", "#1e90ff", "#3742fa",
-                         "#e84393", "#05c46b", "#ffd43b", "#ffa000"
-                 )):
+                 colors=None):
+        if colors is None:
+            colors = [
+                "#ffa502", "#ff6348", "#ff4757", "#747d8c",
+                "#2f3542", "#2ed573", "#1e90ff", "#3742fa",
+                "#e84393", "#05c46b", "#ffd43b", "#ffa000"
+            ]
         if other_conf is None:
             other_conf = dict()
         self.POSITIONS_PAIR = node_pos_pair
