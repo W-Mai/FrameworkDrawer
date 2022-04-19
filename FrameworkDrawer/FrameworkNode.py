@@ -53,7 +53,8 @@ class ModelBoxBaseModelMetaclass(type):
 
 
 class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
-    Meta = None
+    class Meta:
+        pass
 
     def __init__(self):
         pass
