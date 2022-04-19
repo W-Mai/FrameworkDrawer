@@ -4,7 +4,8 @@
 # Mail: 1341398182@qq.com
 # Created Time:  2022-04-11
 #############################################
-
+import inspect
+import io
 import json
 from typing import IO, Union, Literal
 
@@ -14,6 +15,8 @@ from schemdraw import Segment, SegmentCircle, SegmentText, ImageFormat
 from schemdraw.util import Point
 from itertools import combinations
 from xunionfind import UnionFind
+
+from FrameworkDrawer.FrameworkNode import CONFIGURE, ModelBoxBaseModel
 
 
 class ModelBox(elm.Element):
@@ -64,14 +67,22 @@ class ModelBox(elm.Element):
 
 
 class FrameworkDrawer(object):
-    def __init__(self, json_file):
+    def __init__(self, file, is_model=False):
+        self.file = file
         self.output_file = None
-        if json_file is None:
-            raise ValueError("json_file is None")
-        if isinstance(json_file, str):
-            self.json_data = json.loads(json_file)
+        if not is_model:
+            if file is None:
+                raise ValueError("json_file is Not Found")
+            if isinstance(file, str):
+                self.json_data = json.loads(file)
+            else:
+                self.json_data = json.load(file)
         else:
-            self.json_data = json.load(json_file)
+            if file is None:
+                raise ValueError("Model is Not Found")
+            buffer = io.StringIO()
+            self.export_model_to_json(buffer)
+            self.json_data = json.loads(buffer.getvalue())
 
     def draw(self, output_file, fmt: Union[
         Literal['eps', 'jpg', 'pdf', 'pgf', 'png', 'ps', 'raw', 'rgba', 'svg', 'tif'], ImageFormat] = "svg"):
@@ -164,3 +175,30 @@ class FrameworkDrawer(object):
             d.save(output_file)
         if isinstance(output_file, IO):
             output_file.write(d.get_imagedata(fmt=fmt))
+
+    def export_model_to_json(self, output_file, indent=None):
+        module = self.file
+        configures = inspect.getmembers(module, lambda member: isinstance(member, CONFIGURE))
+        if len(configures) == 0:
+            raise Exception('CONFIGURE class not found.')
+        configure: CONFIGURE = configures[0][1]
+
+        framework_draw_file_dict = {
+            'drawing_info': {},
+            'models': [],
+            'colors': configure.COLORS,
+        }
+
+        for name, model in inspect.getmembers(module, lambda member: inspect.isclass(member)
+                                                                     and issubclass(member, ModelBoxBaseModel)
+                                                                     and not member == ModelBoxBaseModel):
+            model_ins = model()
+            framework_draw_file_dict['models'].append(model_ins.to_dict())
+            framework_draw_file_dict['drawing_info'][name] = model_ins.other_conf
+
+        if isinstance(output_file, str):
+            json.dump(framework_draw_file_dict, open(output_file, 'w', encoding="utf-8"), default=lambda o: o.export,
+                      indent=indent)
+        else:
+            json.dump(framework_draw_file_dict, output_file, default=lambda o: o.export, indent=indent)
+        # print(framework_draw_file_dict)
