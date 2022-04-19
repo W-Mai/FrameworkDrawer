@@ -153,6 +153,7 @@ class FrameworkDrawer(object):
                     right_model_right_signal = get_signal(right_model['name'], signal, 'right')
 
                     if left_model_right_signal.x + 0.5 > right_model_left_signal.x:
+                        # 当左模块的右边信号跟右模块的左边信号重合时
                         if right_model['flag']:
                             wire = elm.Wire(shape="c",
                                             k=right_model_right_signal.x - left_model_right_signal.x + 0.5 + signal_index / 3)
@@ -168,8 +169,13 @@ class FrameworkDrawer(object):
                                   .to(right_model_left_signal)
                                   .color(signal_color_map[signal]))
                     else:
-                        d.add(elm.Wire("c", k=0.5 + signal_index / 3).at(left_model_right_signal).to(
-                            right_model_left_signal)).color(signal_color_map[signal])
+                        # 当左模块的右边信号跟右模块的左边信号不重合时
+                        if left_model_right_signal.y < right_model_left_signal.y:
+                            d.add(elm.Wire("c", k=0.5 + signal_index / 3).at(left_model_right_signal).to(
+                                right_model_left_signal)).color(signal_color_map[signal])
+                        else:
+                            d.add(elm.Wire("c", k=-(0.5 + signal_index / 3)).at(right_model_left_signal).to(
+                                left_model_right_signal)).color(signal_color_map[signal])
 
         if isinstance(output_file, str):
             d.save(output_file)

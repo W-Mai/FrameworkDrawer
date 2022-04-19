@@ -11,8 +11,8 @@ class ALU(ModelBoxBaseModel):
 
 class Core_Ctrl(ModelBoxBaseModel):
     CLK = Wire('CLK')
-    Jump_Flag_In = Wire('Jump_Flag_In')
-    Jump_Addr_In = Wire('Jump_Addr_In', (0, 31))
+    Jump_Flag_In = Wire('Jump_Flag_In66')
+    Jump_Addr_In = Wire('Jump_Addr_In66', (0, 31))
 
     Hold_Flag_EX_In = Wire('Hold_Flag_EX_In')
     Hold_Flag_RIB_In = Wire('Hold_Flag_RIB_In')
@@ -139,7 +139,7 @@ class Core_ID(ModelBoxBaseModel):
 
 CONFIG = CONFIGURE(
     node_pos_pair={
-        ALU: (-1, 15),
+        ALU: (-20, 10),
         Core_Ctrl: (-6.5, 5),
         Core_PC_REG: (-35, 0),
         Core_REGS: (-45, 15),
