@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="FrameworkDrawer",
-    version="0.0.2",
+    version="0.0.3",
     description="Draw a simple RTL block diagram.",
     long_description="A module for drawing simple RTL gate-level circuits.",
     author="W-Mai",
