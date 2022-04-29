@@ -144,7 +144,8 @@ class FrameworkDrawer(object):
                     if model_wire_signal_model_set[signal].connected(left_model['name'], right_model['name']):
                         continue
 
-                    signal_index = left_model['signals'].index(signal)
+                    left_signal_index = left_model['signals'].index(signal)
+                    right_signal_index = right_model['signals'].index(signal)
 
                     model_wire_signal_model_set[signal].union(left_model['name'], right_model['name'])
                     left_model_left_signal = get_signal(left_model['name'], signal, 'left')
@@ -156,26 +157,38 @@ class FrameworkDrawer(object):
                         # 当左模块的右边信号跟右模块的左边信号重合时
                         if right_model['flag']:
                             wire = elm.Wire(shape="c",
-                                            k=right_model_right_signal.x - left_model_right_signal.x + 0.5 + signal_index / 3)
+                                            k=right_model_right_signal.x - left_model_right_signal.x + 0.5 + left_signal_index / 4)
                             d.add(wire
                                   .at(left_model_right_signal)
                                   .to(right_model_right_signal)
                                   .color(signal_color_map[signal]))
                         else:
                             wire = elm.Wire(shape="c",
-                                            k=-(0.5 + signal_index / 3))
+                                            k=-(0.5 + left_signal_index / 4))
                             d.add(wire
                                   .at(left_model_left_signal)
                                   .to(right_model_left_signal)
                                   .color(signal_color_map[signal]))
                     else:
                         # 当左模块的右边信号跟右模块的左边信号不重合时
+                        k_left = 0.5 + left_signal_index / 4
+                        k_right = 0.5 + right_signal_index / 4
+
                         if left_model_right_signal.y < right_model_left_signal.y:
-                            d.add(elm.Wire("c", k=0.5 + signal_index / 3).at(left_model_right_signal).to(
-                                right_model_left_signal)).color(signal_color_map[signal])
+                            if k_left < right_model_left_signal.x - left_model_right_signal.x:
+                                d.add(elm.Wire("c", k=k_left).at(left_model_right_signal).to(
+                                    right_model_left_signal)).color(signal_color_map[signal])
+                            else:
+                                d.add(elm.Wire("c", k=k_right).at(left_model_right_signal).to(
+                                    right_model_left_signal)).color(signal_color_map[signal])
+
                         else:
-                            d.add(elm.Wire("c", k=-(0.5 + signal_index / 3)).at(right_model_left_signal).to(
-                                left_model_right_signal)).color(signal_color_map[signal])
+                            if k_left < right_model_left_signal.x - left_model_right_signal.x:
+                                d.add(elm.Wire("c", k=-k_left).at(right_model_left_signal).to(
+                                    left_model_right_signal)).color(signal_color_map[signal])
+                            else:
+                                d.add(elm.Wire("c", k=-k_right).at(right_model_left_signal).to(
+                                    left_model_right_signal)).color(signal_color_map[signal])
 
         if isinstance(output_file, str):
             d.save(output_file)
