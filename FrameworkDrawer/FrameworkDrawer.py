@@ -115,7 +115,7 @@ class FrameworkDrawer(object):
             COLORS = model_json['colors']
             connectors = model_json['connectors']
             connector_instance = dict()
-            print(connectors)
+
             for connector in connectors:
                 tmp_connectors = []
                 for connector_pos in connector['positions']:
@@ -127,6 +127,7 @@ class FrameworkDrawer(object):
 
             model_info = []
             model_instances = dict()
+
             for model in model_json['models']:
                 pos = Point(model_json['drawing_info'][model['name']]['position'].values())
                 flag = model_json['drawing_info'][model['name']].get('flag', False)
@@ -280,6 +281,7 @@ class FrameworkDrawer(object):
         framework_draw_file_dict = {
             'drawing_info': {},
             'models': [],
+            'connectors': [connector.to_dict() for connector in configure.CONNECTOR_PAIR],
             'colors': configure.COLORS,
         }
 

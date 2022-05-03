@@ -7,16 +7,14 @@
 import time
 
 from FrameworkDrawer import FrameworkDrawer
+from FrameworkDrawer.FrameworkNode import Connector
 
 if __name__ == '__main__':
     t0 = time.time()
-    fd = FrameworkDrawer(file=open("../../model.json"), is_model=False)
+    fd = FrameworkDrawer(file=__import__("MyNode"), is_model=True)
     fd.draw("../../imgs/schema.svg")
     print("Time:", time.time() - t0)
 
-    import MyNode
-
-    print(MyNode.ALU.RST.model.RST)
     #
     # fd = FrameworkDrawer(file=MyNode, is_model=True)
     # fd.export_model_to_json(open("../../model.json", "w"))

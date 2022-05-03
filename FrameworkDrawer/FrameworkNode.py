@@ -130,8 +130,8 @@ class Connector(object):
 
     def to_dict(self):
         return {
-            "from": f"{self.start_signal.model.raw_name()}.{self.start_signal.model.raw_name()}",
-            "to": f"{self.end_signal.model.raw_name()}.{self.end_signal.model.raw_name()}",
+            "from": f"{self.start_signal.model.name()}.{self.start_signal.label}",
+            "to": f"{self.end_signal.model.name()}.{self.end_signal.label}",
             "positions": [pos.export for pos in self.positions]
         }
 
@@ -140,8 +140,11 @@ class CONFIGURE(object):
 
     def __init__(self,
                  node_pos_pair: Dict[Type[ModelBoxBaseModel], Tuple[int, int]],
+                 connector_pair=None,
                  other_conf=None,
                  colors=None):
+        if connector_pair is None:
+            connector_pair = []
         if colors is None:
             colors = [
                 "#ffa502", "#ff6348", "#ff4757", "#747d8c",
@@ -153,6 +156,7 @@ class CONFIGURE(object):
         self.POSITIONS_PAIR = node_pos_pair
         self.COLORS = colors
         self.OTHER_CONF = other_conf
+        self.CONNECTOR_PAIR = connector_pair
 
         for node, pos in node_pos_pair.items():
             node.Meta.position = Point(*pos)

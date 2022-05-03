@@ -1,4 +1,4 @@
-from FrameworkDrawer.FrameworkNode import ModelBoxBaseModel, Reg, Wire, CONFIGURE
+from FrameworkDrawer.FrameworkNode import ModelBoxBaseModel, Reg, Wire, CONFIGURE, Connector
 
 
 class ALU(ModelBoxBaseModel):
@@ -153,7 +153,9 @@ CONFIG = CONFIGURE(
         Core_IF_ID: {
             'flag': True
         },
-    }, colors=[
+    }, connector_pair=[
+        Connector(Core_Ctrl.CLK, Core_PC_REG.CLK, (-4, 15)),
+    ], colors=[
         "#ffa502", "#ff6348", "#ff4757", "#747d8c",
         "#2f3542", "#2ed573", "#1e90ff", "#3742fa",
         "#e84393", "#05c46b", "#ffd43b", "#ffa000"
