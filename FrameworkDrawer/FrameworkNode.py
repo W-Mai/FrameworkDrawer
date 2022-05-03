@@ -64,23 +64,24 @@ class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
     def __init__(self):
         pass
 
-    def to_dict(self):
-        meta_dict = self.meta_dict
+    @classmethod
+    def to_dict(cls):
+        meta_dict = cls.meta_dict()
         res_dict = {
             # 如果name为空，则使用类名
-            'name': self.name,
-            'signals': [sig.to_dict() for sig in self.signals]
+            'name': cls.name(),
+            'signals': [sig.to_dict() for sig in cls.signals()]
         }
 
         return res_dict
 
-    @property
-    def other_conf(self):
-        meta_dict = self.meta_dict
+    @classmethod
+    def other_conf(cls):
+        meta_dict = cls.meta_dict()
         res_dict = {
             conf_name:
                 meta_dict.get(conf_name, None)
-            for conf_name in self.readable_conf() if meta_dict.get(conf_name, None) is not None
+            for conf_name in cls.readable_conf() if meta_dict.get(conf_name, None) is not None
         }
         return res_dict
 
@@ -89,22 +90,22 @@ class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
     def readable_conf():
         return ["position", "flag"]
 
-    @property
-    def meta_dict(self):
-        meta_class = type(self).Meta
+    @classmethod
+    def meta_dict(cls):
+        meta_class = cls.Meta
         if meta_class is not None:
             return {
                 conf_name: getattr(meta_class, conf_name, None)
-                for conf_name in self.readable_conf()
+                for conf_name in cls.readable_conf()
             }
 
-    @property
-    def attrs(self):
-        return self._attrs
+    @classmethod
+    def attrs(cls):
+        return cls._attrs
 
-    @property
-    def signals(self):
-        return self._signals
+    @classmethod
+    def signals(cls):
+        return cls._signals
 
     @property
     def name(self):
