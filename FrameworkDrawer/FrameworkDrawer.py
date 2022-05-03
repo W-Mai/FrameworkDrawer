@@ -13,10 +13,30 @@ import schemdraw
 import schemdraw.elements as elm
 from schemdraw import Segment, SegmentCircle, SegmentText, ImageFormat
 from schemdraw.util import Point
-from itertools import combinations
+from itertools import combinations, chain, tee
 from xunionfind import UnionFind
 
 from FrameworkDrawer.FrameworkNode import CONFIGURE, ModelBoxBaseModel
+from FrameworkDrawer.FrameworkNode import Point as FPoint
+from FrameworkDrawer.Signals import SignalBase
+
+
+def pairwise(iterable):
+    """s -> (s0,s1), (s1,s2), (s2, s3), ..."""
+    a, b = tee(iterable)
+    next(b, None)
+    return zip(a, b)
+
+
+class Connector(elm.Element):
+    def __init__(self, source: str, target: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.source = source
+        self.target = target
+        self.label = f"{source}->{target}"
+
+        self.anchors['center'] = (0, 0)
 
 
 class ModelBox(elm.Element):
@@ -93,6 +113,18 @@ class FrameworkDrawer(object):
             model_json = self.json_data
 
             COLORS = model_json['colors']
+            connectors = model_json['connectors']
+            connector_instance = dict()
+            print(connectors)
+            for connector in connectors:
+                tmp_connectors = []
+                for connector_pos in connector['positions']:
+                    tmp_connectors.append(
+                        d.add(Connector(connector['from'], connector['to']).at(connector_pos.values())))
+                if len(tmp_connectors) == 0:
+                    continue
+                connector_instance[tmp_connectors[0].label] = tmp_connectors
+
             model_info = []
             model_instances = dict()
             for model in model_json['models']:
@@ -108,6 +140,7 @@ class FrameworkDrawer(object):
                 })
 
             all_signals = {s for info in model_info for s in info['signals']}
+            all_signals = chain(all_signals, [c for c in connector_instance])
             signal_color_map = {s: COLORS[i % len(COLORS)] for i, s in enumerate(sorted(all_signals))}
             # 1,2,3,4 combinations is
             # [1, 2] [1, 3] [1, 4] [2, 3] [2, 4] [3, 4]
@@ -189,6 +222,48 @@ class FrameworkDrawer(object):
                             else:
                                 d.add(elm.Wire("c", k=-k_right).at(right_model_left_signal).to(
                                     left_model_right_signal)).color(signal_color_map[signal])
+
+        for label, connectors in connector_instance.items():
+            for con1, con2 in pairwise(connectors):
+                k0 = (con1.center.x - con2.center.x) / 2
+                d.add(elm.Wire("c", k=k0).at(con2.center).to(con1.center).color(signal_color_map[label]))
+                # print(con1, con2, con1.center, con2.center)
+
+            # 解析模块和信号
+            label: str
+            (
+                start_model_name, start_signal_name), (
+                end_model_name, end_model_signal_name
+            ) = [label.split('.') for label in label.split('->')]
+
+            start_signal_left = get_signal(start_model_name, start_signal_name, 'left')
+            start_signal_right = get_signal(start_model_name, start_signal_name, 'right')
+            end_signal_left = get_signal(end_model_name, end_model_signal_name, 'left')
+            end_signal_right = get_signal(end_model_name, end_model_signal_name, 'right')
+
+            start_connector = connectors[0]
+            end_connector = connectors[-1]
+
+            if start_signal_left.x < start_connector.center.x < start_signal_right.x:
+                d.add(elm.Wire("c", k=0.5).at(start_signal_left).to(start_connector.center).color(
+                    signal_color_map[label]))
+            else:
+                if start_signal_left.x > start_connector.center.x:
+                    d.add(elm.Wire("c", k=-0.5).at(start_signal_left).to(start_connector.center).color(
+                        signal_color_map[label]))
+                else:
+                    d.add(elm.Wire("c", k=0.5).at(start_signal_right).to(start_connector.center).color(
+                        signal_color_map[label]))
+
+            if end_signal_left.x < end_connector.center.x < end_signal_right.x:
+                d.add(elm.Wire("c", k=0.5).at(end_connector.center).to(end_signal_left).color(signal_color_map[label]))
+            else:
+                if end_signal_left.x > end_connector.center.x:
+                    d.add(elm.Wire("c", k=-0.5).at(end_signal_left).to(end_connector.center).color(
+                        signal_color_map[label]))
+                else:
+                    d.add(elm.Wire("c", k=0.5).at(end_signal_right).to(end_connector.center).color(
+                        signal_color_map[label]))
 
         if isinstance(output_file, str):
             d.save(output_file)
