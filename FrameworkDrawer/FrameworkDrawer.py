@@ -288,9 +288,9 @@ class FrameworkDrawer(object):
         for name, model in inspect.getmembers(module, lambda member: inspect.isclass(member)
                                                                      and issubclass(member, ModelBoxBaseModel)
                                                                      and not member == ModelBoxBaseModel):
-            model_ins = model()
+            model_ins = model
             framework_draw_file_dict['models'].append(model_ins.to_dict())
-            framework_draw_file_dict['drawing_info'][name] = model_ins.other_conf
+            framework_draw_file_dict['drawing_info'][model_ins.name()] = model_ins.other_conf()
 
         if isinstance(output_file, str):
             json.dump(framework_draw_file_dict, open(output_file, 'w', encoding="utf-8"), default=lambda o: o.export,
