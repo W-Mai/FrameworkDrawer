@@ -107,9 +107,9 @@ class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
     def signals(cls):
         return cls._signals
 
-    @property
-    def name(self):
-        return self.meta_dict.get('name', type(self).__name__)
+    @classmethod
+    def name(cls):
+        return getattr(cls.Meta, "name", cls.__name__)
 
 
 class Connector(object):
