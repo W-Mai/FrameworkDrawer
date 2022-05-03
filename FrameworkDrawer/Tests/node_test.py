@@ -14,7 +14,9 @@ if __name__ == '__main__':
     fd.draw("../../imgs/schema.svg")
     print("Time:", time.time() - t0)
 
-    # import MyNode
+    import MyNode
+
+    print(MyNode.ALU.RST.model.RST)
     #
     # fd = FrameworkDrawer(file=MyNode, is_model=True)
     # fd.export_model_to_json(open("../../model.json", "w"))

@@ -46,10 +46,15 @@ class ModelBoxBaseModelMetaclass(type):
                 # sig_obj: SignalBase
                 if sig_obj.alias is None:
                     setattr(sig_obj, 'alias', sig_name)
+                sig_obj.model = ""
                 signals.append(sig_obj)
         attrs['_signals'] = signals
 
-        return super().__new__(mcs, name, bases, attrs)
+        obj = super().__new__(mcs, name, bases, attrs)
+        for sig in obj._signals:
+            sig.model = obj
+
+        return obj
 
 
 class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
@@ -100,6 +105,26 @@ class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
     @property
     def signals(self):
         return self._signals
+
+
+class Connector(object):
+    def __init__(self, start_signal: SignalBase, end_signal: SignalBase, *positions: Tuple[int, int]):
+        self.start_signal = start_signal
+        self.end_signal = end_signal
+
+        self.positions = []
+        for pos in positions:
+            self.positions.append(Point(*pos))
+
+    def __str__(self):
+        return "Connector(start={}, end={}, positions={})".format(self.start_signal, self.end_signal, self.positions)
+
+    def to_dict(self):
+        return {
+            "from": f"{self.start_signal}.{self.start_signal.label}",
+            "to": self.end_signal.alias,
+            "positions": [pos.export for pos in self.positions]
+        }
 
 
 class CONFIGURE(object):

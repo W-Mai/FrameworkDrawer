@@ -30,9 +30,18 @@ class SignalBase(object):
     TYPE = None
 
     def __init__(self, label: str, descriptor: Union[Descriptor, Tuple] = Descriptor(0, 0), alias: str = None):
+        self._model = None
         self.label = label
         self.descriptor = Descriptor(*descriptor) if not isinstance(descriptor, Descriptor) else descriptor
         self.alias = alias
+
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, value):
+        self._model = value
 
     def to_dict(self):
         return {
