@@ -109,7 +109,11 @@ class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
 
     @classmethod
     def name(cls):
-        return getattr(cls.Meta, "name", cls.__name__)
+        return getattr(cls.Meta, "name", cls.raw_name())
+
+    @classmethod
+    def raw_name(cls):
+        return cls.__name__
 
 
 class Connector(object):
@@ -126,8 +130,8 @@ class Connector(object):
 
     def to_dict(self):
         return {
-            "from": f"{self.start_signal}.{self.start_signal.label}",
-            "to": self.end_signal.alias,
+            "from": f"{self.start_signal.model.raw_name()}.{self.start_signal.model.raw_name()}",
+            "to": f"{self.end_signal.model.raw_name()}.{self.end_signal.model.raw_name()}",
             "positions": [pos.export for pos in self.positions]
         }
 
