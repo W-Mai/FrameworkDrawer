@@ -155,6 +155,7 @@ CONFIG = CONFIGURE(
         },
     }, connector_pair=[
         Connector(Core_Ctrl.CLK, Core_PC_REG.CLK, (-4, 15)),
+        Connector(Core_Ctrl.Jump_Addr_In, Core_PC_REG.Jump_Addr_In, (-4, 16)),
     ], colors=[
         "#ffa502", "#ff6348", "#ff4757", "#747d8c",
         "#2f3542", "#2ed573", "#1e90ff", "#3742fa",

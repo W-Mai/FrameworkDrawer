@@ -28,7 +28,7 @@ python main.py [-h] --input INPUT --output OUTPUT [--fmt FMT]
 
 setup(
     name="FrameworkDrawer",
-    version="0.0.5",
+    version="0.0.6",
     description="Draw a simple RTL block diagram.",
     long_description_content_type="text/markdown",
     long_description=long_description,

@@ -231,39 +231,57 @@ class FrameworkDrawer(object):
                 # print(con1, con2, con1.center, con2.center)
 
             # 解析模块和信号
+
+            def get_model_info(model_name):
+                for model_i in model_info:
+                    if model_i["name"] == model_name:
+                        return model_i
+                return None
+
             label: str
             (
-                start_model_name, start_signal_name), (
+                start_model_name, start_model_signal_name), (
                 end_model_name, end_model_signal_name
             ) = [label.split('.') for label in label.split('->')]
 
-            start_signal_left = get_signal(start_model_name, start_signal_name, 'left')
-            start_signal_right = get_signal(start_model_name, start_signal_name, 'right')
+            start_model_info = get_model_info(start_model_name)
+            end_model_info = get_model_info(end_model_name)
+
+            if start_model_info is None or end_model_info is None:
+                continue
+
+            start_signal_left = get_signal(start_model_name, start_model_signal_name, 'left')
+            start_signal_right = get_signal(start_model_name, start_model_signal_name, 'right')
             end_signal_left = get_signal(end_model_name, end_model_signal_name, 'left')
             end_signal_right = get_signal(end_model_name, end_model_signal_name, 'right')
 
             start_connector = connectors[0]
             end_connector = connectors[-1]
 
+            start_signal_index = start_model_info["signals"].index(start_model_signal_name)
+            end_signal_index = end_model_info["signals"].index(end_model_signal_name)
+
+            k0 = 0.5 + start_signal_index / 4
             if start_signal_left.x < start_connector.center.x < start_signal_right.x:
-                d.add(elm.Wire("c", k=0.5).at(start_signal_left).to(start_connector.center).color(
+                d.add(elm.Wire("c", k=k0).at(start_signal_right).to(start_connector.center).color(
                     signal_color_map[label]))
             else:
                 if start_signal_left.x > start_connector.center.x:
-                    d.add(elm.Wire("c", k=-0.5).at(start_signal_left).to(start_connector.center).color(
+                    d.add(elm.Wire("c", k=-k0).at(start_signal_left).to(start_connector.center).color(
                         signal_color_map[label]))
                 else:
-                    d.add(elm.Wire("c", k=0.5).at(start_signal_right).to(start_connector.center).color(
+                    d.add(elm.Wire("c", k=k0).at(start_signal_right).to(start_connector.center).color(
                         signal_color_map[label]))
 
+            k0 = 0.5 + end_signal_index / 4
             if end_signal_left.x < end_connector.center.x < end_signal_right.x:
-                d.add(elm.Wire("c", k=0.5).at(end_connector.center).to(end_signal_left).color(signal_color_map[label]))
+                d.add(elm.Wire("c", k=k0).at(end_signal_left).to(end_connector.center).color(signal_color_map[label]))
             else:
                 if end_signal_left.x > end_connector.center.x:
-                    d.add(elm.Wire("c", k=-0.5).at(end_signal_left).to(end_connector.center).color(
+                    d.add(elm.Wire("c", k=-k0).at(end_signal_left).to(end_connector.center).color(
                         signal_color_map[label]))
                 else:
-                    d.add(elm.Wire("c", k=0.5).at(end_signal_right).to(end_connector.center).color(
+                    d.add(elm.Wire("c", k=k0).at(end_signal_right).to(end_connector.center).color(
                         signal_color_map[label]))
 
         if isinstance(output_file, str):
