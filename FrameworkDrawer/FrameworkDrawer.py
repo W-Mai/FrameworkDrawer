@@ -28,7 +28,7 @@ def pairwise(iterable):
     return zip(a, b)
 
 
-class Connector(elm.Element):
+class ConnectorBox(elm.Element):
     def __init__(self, source: str, target: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -120,7 +120,7 @@ class FrameworkDrawer(object):
                 tmp_connectors = []
                 for connector_pos in connector['positions']:
                     tmp_connectors.append(
-                        d.add(Connector(connector['from'], connector['to']).at(connector_pos.values())))
+                        d.add(ConnectorBox(connector['from'], connector['to']).at(connector_pos.values())))
                 if len(tmp_connectors) == 0:
                     continue
                 connector_instance[tmp_connectors[0].label] = tmp_connectors
