@@ -68,7 +68,7 @@ class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
         meta_dict = self.meta_dict
         res_dict = {
             # 如果name为空，则使用类名
-            'name': meta_dict.get('name', type(self).__name__),
+            'name': self.name,
             'signals': [sig.to_dict() for sig in self.signals]
         }
 
@@ -105,6 +105,10 @@ class ModelBoxBaseModel(object, metaclass=ModelBoxBaseModelMetaclass):
     @property
     def signals(self):
         return self._signals
+
+    @property
+    def name(self):
+        return self.meta_dict.get('name', type(self).__name__)
 
 
 class Connector(object):
